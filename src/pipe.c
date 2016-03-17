@@ -22,7 +22,7 @@ void launchPipe() {
   sigaddset(&mask, SIGPIPE);
   sa.sa_mask = mask;
   if (sigaction(SIGPIPE, &sa, NULL) == -1) {
-    perror("Ошибка: не удается обработать сигнал SIGCHLD");
+    fprintf(stderr, "Can't change action for SIGPIPE");
   }
   
   while (!receivedPipeSignal) {

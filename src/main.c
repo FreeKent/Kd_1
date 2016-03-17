@@ -24,22 +24,22 @@ int main(int argc, char *argv[]){
   int index = 0;
   printf("-------=======Kd_1=======-------\n");
   printf("Pid - %i\n", getpid());
-  printf("Аргументы:\n");
+  printf("Arguments:\n");
   
   curOpt = getopt_long( argc, argv, "", opts, &index );
   while (curOpt != -1) {
     if (opts[index].val == 1) {
       mode = optarg;
-      printf("Режим - %s\n", mode );
+      printf("Mode - %s\n", mode );
     } else if (opts[index].val == 2) {
       posixAmount = atoi(optarg);
-      printf("Количество сигналов - %d\n", posixAmount );
+      printf("Signals amount - %d\n", posixAmount );
     } else if (opts[index].val == 3) {
       killSignal = atoi(optarg);
-      printf("Номер сигнала - %i\n", killSignal );
+      printf("Signal number - %i\n", killSignal );
     } else if (opts[index].val == 4) {
       killPid = atoi(optarg);
-      printf("PID - %i\n", killPid );
+      printf("PID for kill - %i\n", killPid );
     }
     curOpt = getopt_long( argc, argv, "", opts, &index);
   }
@@ -53,25 +53,23 @@ int main(int argc, char *argv[]){
     if (posixAmount > 0) {
       launchPosix(posixAmount);
     } else {
-      printf("Количество сигналов должно быть больше 0\n");
+      printf("Signals amount must be greater 0\n");
       exit( EXIT_FAILURE );
     }
   } else if ( strcmp( mode, "kill" ) == 0 ) {
     if (!killPid) {
-      fprintf(stderr, "Укажите PID, с помощью --pid=value\n");
+      fprintf(stderr, "Need for PID, use --pid=value\n");
       exit( EXIT_FAILURE );
     }
-    
-    if (!killSignal) {
-      fprintf(stderr, "Укажите сигнал, с помощью --signal=value\n");
+    if (killSignal <=0 ) {
+      fprintf(stderr, "Need for signal, use --signal=value\n");
       exit( EXIT_FAILURE );
     }
-    
     launchKill(killSignal, killPid);
   } else if ( strcmp( mode, "pipe" ) == 0 ) {
     launchPipe();
   } else {
-    fprintf(stderr, "Режим работы должен соответствовать одному из указаных:\nstd, child, posix, kill, pipe\n");
+    fprintf(stderr, "Mode must be one of these:\nstd, child, posix, kill, pipe\n");
     exit( EXIT_FAILURE );
   }
   return 0;

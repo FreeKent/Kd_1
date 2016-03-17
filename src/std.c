@@ -32,22 +32,22 @@ void launchStd() {
   sigaddset(&mask, SIGUSR2);
   sa.sa_mask = mask;
   if (sigaction(SIGHUP, &sa, NULL) == -1) {
-    perror("Ошибка: не удается обработать сигнал SIGHUP");
+    fprintf(stderr, "Can't change action for SIGHUP");
   }
   if (sigaction(SIGUSR1, &sa, NULL) == -1) {
-    perror("Ошибка: не удается обработать сигнал SIGUSR1");
+    fprintf(stderr, "Can't change action for SIGUSR1");
   }
   if (sigaction(SIGUSR2, &sa, NULL) == -1) {
-    perror("Ошибка: не удается обработать сигнал SIGUSR2");
+    fprintf(stderr, "Can't change action for SIGUSR2");
   }
-  int exitflag = 1;
-  while (exitflag) {
+  
+  while (1) {
     sleep(10);
     if (errSigno != -1) {
-      fprintf(stderr, "Неизвестный номер сигнала - %d\n", errSigno);
+      fprintf(stderr, "Unexpected signal - %d\n", errSigno);
       errSigno = -1;
     } else if (receivedSigno != -1) {
-      fprintf(stdout,"Получен сигнал %d от процесса PID:%d GID:%d\n",
+      printf("Got signal %d from PID:%d GID:%d\n",
              receivedSigno,receivedSiginfo->si_pid,getpgid(receivedSiginfo->si_pid));
       receivedSigno = -1;
       receivedSiginfo = NULL;

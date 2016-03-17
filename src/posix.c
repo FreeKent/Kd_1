@@ -8,10 +8,8 @@ int infosCount = 0;
 siginfo_t *receivedInfos;
 
 void posixHandler(int signo, siginfo_t *siginfo, void *context){
-  if (signo >= SIGRTMIN && signo < SIGRTMAX) {
+  if (signo >= SIGRTMIN && signo <= SIGRTMAX) {
     receivedInfos[infosCount++] = *siginfo;
-  } else {
-    errSignal = signo;
   }
 }
 
@@ -24,12 +22,11 @@ void launchPosix(int amount) {
   sigset_t mask;
   
   sigfillset(&mask);
-  //sigaddset(&mask, SIGPIPE);
   sa.sa_mask = mask;
   int i;
-  for (i=SIGRTMIN; i<SIGRTMAX; i++) {
+  for (i=SIGRTMIN; i<SIGRTMAX+1; i++) {
     if (sigaction(i, &sa, NULL) == -1) {
-      fprintf(stderr, "Can't block signal - %d", i);
+      fprintf(stderr, "Can't change action for %d",i);
     }
   }
   sigprocmask(SIG_BLOCK, &mask, NULL);
@@ -41,7 +38,7 @@ void launchPosix(int amount) {
   } else if (childPid == 0){
     printf("Sent:\n");
     for (i=0; i<amount; i++) {
-      int signo = rand()%(SIGRTMAX-SIGRTMIN) + SIGRTMIN;
+      int signo = rand()%(SIGRTMAX-SIGRTMIN + 1) + SIGRTMIN;
       union sigval val;
       val.sival_int = rand();
       sigqueue(parentPid, signo, val);
